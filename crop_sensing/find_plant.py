@@ -7,13 +7,13 @@ from sklearn.cluster import KMeans
 import pyzed.sl as sl
 
 
+
 # === Trova piante filtrando il verde ===
-def find_excess_green(image, kernel_dimension, cut_iterations):
+def filter_plants(image, kernel_dimension=1, cut_iterations=1):
     # Calcola l'EXG (Excess Green) per il rilevamento del verde (2G-B-R)
     r, g, b = cv2.split(image)
-    epsilon = 1e-6  # piccolo valore per evitare divisioni per zero
     exg = (2 * g.astype(np.int16) - r.astype(np.int16) - b.astype(np.int16)) 
-    #gli = exg / (2 * g.astype(np.int16) + r.astype(np.int16) + b.astype(np.int16) + epsilon)
+    #gli = exg / (2 * g.astype(np.int16) + r.astype(np.int16) + b.astype(np.int16) + 0.001)
     # Filtra l'immagine per rimuovere il rumore
     T = filters.threshold_otsu(exg)
     print(f"Threshold: {T}") # DEBUG
@@ -25,9 +25,7 @@ def find_excess_green(image, kernel_dimension, cut_iterations):
     ColorSegmented = dilation
     # DEBUG: Applica la maschera all'immagine originale e la salva
     masked_image = cv2.bitwise_and(image, image, mask=ColorSegmented)
-    cv2.imshow("Masked Image", masked_image)
-    cv2.waitKey(0)
-    cv2.imwrite("data/excess_green.png", masked_image)
+    cv2.imwrite("crop_sensing/data/excess_green.png", masked_image)
     # Ritorna la maschera del verde
     return ColorSegmented
 
@@ -121,7 +119,7 @@ def plot_3d_bbox(mask, point_cloud):
             point_cloud_with_bbox.set_value(int(x), int(y), [x, y, z, r / 255.0, g / 255.0, b / 255.0])
 
     # Salva il point cloud con la bounding box come file PLY
-    point_cloud_with_bbox.write("data/point_cloud_with_bbox.ply")
+    point_cloud_with_bbox.write("crop_sensing/data/point_cloud_with_bbox.ply")
     # FINE DEBUG
 
     return bbxpts

@@ -27,17 +27,21 @@ def zed_init(pose):
     
     return zed
 
-def memorize_image(image, depth_map):
+def memorize_images(image, depth_map, normal_map):
     # Salva l'immagine e la mappa di profondità per utilizzo offline
     image_path = "data/saved_image.npy"
     depth_map_path = "data/saved_depth_map.npy"
     normal_map_path = "data/saved_normal_map.npy"
+    # Visualizza la normal map come immagine
+    normal_map_data = normal_map.get_data()
+    normal_map_image = ((normal_map_data[:, :, :3] + 1) / 2 * 255).astype(np.uint8)  
+    # Salva le immagini
     np.save(image_path, image)
     np.save(depth_map_path, depth_map)
-    print(f"\"Salvato immagine in \\data\"")
+    cv2.imwrite(normal_map_path, normal_map_image)
 
 # === Acquisizione immagine e mappa di profondità ===
-def get_zed_image(zed):
+def get_zed_image(zed, save=False):
     # Inizializza parametri e variabili
     runtime_parameters = sl.RuntimeParameters()
     image_zed = sl.Mat()
@@ -55,20 +59,11 @@ def get_zed_image(zed):
         image = cv2.cvtColor(image_zed.get_data(), cv2.COLOR_RGBA2RGB)
         break
     # DEBUG: Salva l'immagine e la mappa di profondità per utilizzo offline
-    #memorize_image(image, depth_map)
-    
-    # Visualizza la normal map come immagine
-    normal_map_data = normal_map.get_data()
-    normal_map_image = ((normal_map_data[:, :, :3] + 1) / 2 * 255).astype(np.uint8)  
-    # Salva la normal map
-    normal_map_path = "data/normals.png"
-    cv2.imwrite(normal_map_path, normal_map_image)
-    print(f"\"Salvato normal map in \\data\"")
-
-    # Salva il point cloud in un file PLY
-    point_cloud_path = "data/point_cloud.ply"
-    point_cloud.write(point_cloud_path)
-    print(f"\"Salvato point cloud in \\data\"")
+    if save:
+        memorize_images(image, depth_map, normal_map)
+        # Salva il point cloud in un file PLY
+        point_cloud.write("data/point_cloud.ply")
+        print(f"\"Salvato acquisizioni in \\data\"")
     
     # Ritorna le misure
     return image, depth_map, normal_map, point_cloud

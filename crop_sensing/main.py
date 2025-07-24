@@ -2,35 +2,38 @@ import cv2
 import zed_manager
 import find_plant
 import cobot_manager
+import mock
 
-
+def save_clustered_image(image, bounding_boxes):
+    # Draw bounding boxes on the original image for visualization
+    for (x_min, y_min, x_max, y_max) in bounding_boxes:
+        cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
+    cv2.imwrite("crop_sensing/data/clusters.png", image)
 
 def main():
     # init magic numbers
     linux_ip = "192.168.5.6"
-    plants_number = 2
+    plants_number = 3
     
     # Ottieni translazione e orientamento del cobot
     pose = cobot_manager.get_cobot_pose(linux_ip)
+
     # Inizializza la ZED
     zed = zed_manager.zed_init(pose)
     
-    # Acquisisci l'immagine e la mappa di profondità
+    # Acquisisci i dati dalla ZED
     image, depth_map, normal_map, point_cloud = zed_manager.get_zed_image(zed)
+    #image, depth_map, normal_map, point_cloud = mock.get_image()
     
-    # Trova il più grande cluster di verde
-    mask = find_plant.find_excess_green(image, kernel_dimension=0, cut_iterations=2)
+    # Trova le piantine nell'immagine
+    mask = find_plant.filter_plants(image)
     
     # Dividi la maschera di ogni piantina
     masks, bounding_boxes = find_plant.segment_plants(mask, plants_number)
-    
-    # Draw bounding boxes on the original mask for visualization
-    for (x_min, y_min, x_max, y_max) in bounding_boxes:
-        cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-    cv2.imwrite("data/clusters.png", image)
-    
+    save_clustered_image(image, bounding_boxes)
+
+    # Estrai le bounding box 3D dei cluster
     for m in masks:
-        # Localizza l'area 3D che contiene il cluster 
         bbxpts = find_plant.plot_3d_bbox(m, point_cloud)
         
     # Comunicala al Cobot e acquisci ply

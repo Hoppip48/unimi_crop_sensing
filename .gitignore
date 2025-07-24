@@ -1,0 +1,7 @@
+# Ignora tutti i file dentro crop_sensing/data/
+crop_sensing/data/*
+
+# Ignora le cartelle __pycache__ ovunque (meglio usare i doppi underscore e lo slash finale)
+crop_sensing/__pycache__/
+__pycache__/
+*.pyc
