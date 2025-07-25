@@ -2,9 +2,9 @@ import pyzed.sl as sl
 import numpy as np
 import cv2
 
-### Questo file si occupa di interagire con la camera ###
+### This file purpose is to manage the ZED camera ###
 
-# === Inizializza ZED ===
+# === Initialize ZED ===
 def zed_init(pose):
     zed = sl.Camera()
     init_params = sl.InitParameters()
@@ -31,33 +31,33 @@ def zed_init(pose):
     
     return zed
 
+# DEBUG: Save the images and depth map for testing purposes
 def memorize_images(image, depth_map, normal_map):
-    # Salva l'immagine e la mappa di profondità come PNG per utilizzo offline
     image_path = "data/saved_image.png"
     depth_map_path = "data/saved_depth_map.png"
     normal_map_path = "data/saved_normal_map.png"
-    # Visualizza la normal map come immagine
+    # Transform the normal map to a format suitable for saving
     normal_map_data = normal_map.get_data()
     normal_map_image = ((normal_map_data[:, :, :3] + 1) / 2 * 255).astype(np.uint8)
-    # Normalizza la depth map per visualizzazione e salvataggio
+    # Normalize the depth map for visualization
     depth_map_data = depth_map.get_data()
     depth_map_norm = cv2.normalize(depth_map_data[:, :, 2], None, 0, 255, cv2.NORM_MINMAX)
     depth_map_image = depth_map_norm.astype(np.uint8)
-    # Salva le immagini
+    # Save the images
     cv2.imwrite(image_path, image)
     cv2.imwrite(depth_map_path, depth_map_image)
     cv2.imwrite(normal_map_path, normal_map_image)
 
-# === Acquisizione immagine e mappa di profondità ===
+# === Acquire ZED image and depth map ===
 def get_zed_image(zed, save=False):
-    # Inizializza parametri e variabili
+    # Initialize variables
     runtime_parameters = sl.RuntimeParameters()
     image_zed = sl.Mat()
     depth_map = sl.Mat()
     point_cloud = sl.Mat()
     normal_map = sl.Mat()
 
-    # Grab dell'immagine e della mappa di profondità
+    # Retrieve the image and depth map
     print("Acquisizione misure dalla camera...")
     while zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
         # Acquisisci l'immagine e la mappa di profondità
@@ -68,12 +68,11 @@ def get_zed_image(zed, save=False):
         image = cv2.cvtColor(image_zed.get_data(), cv2.COLOR_RGBA2RGB)
         break
 
-    # DEBUG: Salva l'immagine e la mappa di profondità per utilizzo offline
+    # DEBUG: Save the data
     if save:
         memorize_images(image, depth_map, normal_map)
         # Salva il point cloud in un file PLY
         point_cloud.write("data/point_cloud.ply")
         print(f"\"Salvato acquisizioni in \\data\"")
     
-    # Ritorna le misure
     return image, depth_map, normal_map, point_cloud

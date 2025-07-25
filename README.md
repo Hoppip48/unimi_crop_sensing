@@ -1,15 +1,15 @@
 ## About The Project
 
-`unimi_crop_sensing` nasce con l’obiettivo di offrire un insieme di **operazioni semplici e intuitive** per interagire con la **camera ZED**. Consiste in un toolkit per l'elaborazione e segmentazione di immagini e point cloud acquisiti tramite la **camera stereo ZED**. Il progetto è pensato per applicazioni di agricoltura di precisione, consentendo di identificare piante in 2D e 3D, generare bounding box e comunicare con un cobot attraverso WebSocket in ambiente ROS.
+`unimi_crop_sensing` was created with the aim of offering a set of **simple and intuitive operations** to interact with the **ZED camera**. It consists of a toolkit for processing and segmenting images and point clouds acquired via the **ZED stereo camera**. The project is designed for precision agriculture applications, allowing you to identify plants in 2D and 3D, generate bounding boxes and communicate with a cobot through WebSocket in a ROS environment.
 
 https://github.com/Hoppip48/unimi_crop_sensing/
 
-### Funzionalità principali
-* Segmentazione del verde con Excess Green Index
-* Clustering delle piante tramite KMeans
-* Calcolo bounding box 2D e 3D su point cloud
-* Salvataggio `.ply`, immagini, normal map
-* Integrazione WebSocket ROS (`rosbridge`) per invio/lettura pose
+### Main features
+* Green segmentation with Excess Green Index
+* Plant clustering via KMeans
+* 2D and 3D bounding box calculation on point cloud
+* Save `.ply`, images, normal map
+* WebSocket ROS (`rosbridge`) integration for communication on separate systems
 
 ### Built With
 
@@ -24,27 +24,27 @@ https://github.com/Hoppip48/unimi_crop_sensing/
 
 ### Prerequisites
 
-Assicurati di avere:
+Make sure you have:
 - Python 3.9
-- ZED SDK installato correttamente e funzionante
-- ROS + rosbridge in esecuzione se si usa WebSocket
-- Le librerie listate in `requirements.txt`
+- ZED SDK properly installed and working
+- ROS + rosbridge running if you use WebSocket
+- The libraries listed in `requirements.txt`
 
 ### Installation
 
-Puoi usare `unimi_crop_sensing` come **pacchetto Python installabile via PyPI**. Installa tutto con:
+You can use `unimi_crop_sensing` as a **Python package installable via PyPI**. Install everything with:
 ```bash
 pip install unimi_crop_sensing
 ```
 
-⚠️ Pyzed 5.0 richiede numpy 2.x, ciò va in conflitto con altre funzioni del progetto, perciò se riscontri errori relativi a `numpy`, assicurati di installare una versione compatibile:
+⚠️ Pyzed 5.0 requires numpy 2.x, this conflicts with other project features, so if you encounter errors related to `numpy`, make sure you install a compatible version:
 ```bash
 pip install "numpy<2"
 ```
 
 ## Usage
 
-Questo è un esempio di main che sfrutta ogni funzione per ottenere coordinate spaziali e point cloud di ogni piantina nel proprio raggio d'azione
+This is an example of a script that uses every function to obtain spatial coordinates and point clouds of each plant within its range
 
 ```python
 # This function is used to test the functionalities of the crop sensing module
