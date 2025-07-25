@@ -1,6 +1,5 @@
 name: Upload Python Package
 
-# 👇 Questo workflow si attiva solo quando fai un push di un TAG come v0.1.0
 on:
   workflow-dispatch:  # Permette di eseguire manualmente il workflow 
 
