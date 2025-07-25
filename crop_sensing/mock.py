@@ -1,13 +1,8 @@
 # mock_zed_manager.py
 import cv2
 import numpy as np
-import open3d as o3d
 import torch
-import torchvision.transforms as T
-from PIL import Image
 import pyzed.sl as sl
-import ctypes
-import zed_manager
 
 # Usa MiDaS per stimare depth da RGB
 def estimate_depth_midas(image_path):

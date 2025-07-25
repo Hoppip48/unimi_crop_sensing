@@ -5,3 +5,8 @@ crop_sensing/data/*
 crop_sensing/__pycache__/
 __pycache__/
 *.pyc
+
+# Ignora le le cartelle create dal packaging
+crop_sensing.egg-info/
+dist/
+
