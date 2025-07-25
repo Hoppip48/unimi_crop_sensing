@@ -12,5 +12,3 @@ setup(
         'scikit-learn',
         'websocket'
 ])
-
-
