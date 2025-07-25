@@ -55,21 +55,15 @@ def record_and_save(plant_name='plant',frames=300):
     # Initialize the ZED camera with the configuration parameters
     runtime_parameters, filter_params = initialize_zed(zed, False)  
     
-    # Create a Mesh object
+    # Create a PLY object
     py_point_cloud = sl.FusedPointCloud() 
-    
-    res = sl.Resolution()
-    res.width = 720
-    res.height = 404
-
-    py_mat = sl.Mat()
 
     # Grab data 
     timer = 0
-    while  zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS and timer <= frames:
-        # In background, spatial mapping will use new images, depth and pose to create and update the mesh. No specific functions are required here.
-        mapping_state = zed.get_spatial_mapping_state()
-        zed.retrieve_measure(py_mat, sl.MEASURE.XYZRGBA,sl.MEM.CPU, res)
+    while timer <= frames:
+        # Grab a new image and depth map
+        if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
+            mapping_state = zed.get_spatial_mapping_state()
 
         # DEBUG: Print spatial mapping state
         print("\rImages captured: {0} / {2} || {1}".format(timer, mapping_state, frames))
@@ -90,4 +84,4 @@ def record_and_save(plant_name='plant',frames=300):
     
         
 if __name__ == "__main__":
-    create_plc()
+    record_and_save()
