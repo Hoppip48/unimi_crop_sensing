@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='unimi_crop_sensing',
-    version='0.6',
+    version='0.7',
     packages=find_packages(),
     install_requires=[
         'opencv-python',
