@@ -2,7 +2,6 @@ import cv2
 import zed_manager
 import find_plant
 import cobot_manager
-import mock
 
 def save_clustered_image(image, bounding_boxes):
     # Draw bounding boxes on the original image for visualization
