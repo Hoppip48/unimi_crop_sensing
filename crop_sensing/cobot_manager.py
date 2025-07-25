@@ -82,6 +82,15 @@ def listen_for_pose(linux_ip):
     thread.start()
 
 def send_cobot_map(linux_ip, bbxpts):
+    """
+    This function establishes a WebSocket connection to the specified ROS bridge server
+    running on the given Linux IP address and sends the bounding box coordinates.
+
+    Args:
+        linux_ip (str): IP address of the ROS-enabled Linux machine running rosbridge server.
+        bbxpts (dict): Bounding box data dictionary containing min and max coordinates,
+            e.g., {"min": {"x": ..., "y": ..., "z": ...}, "max": {"x": ..., "y": ..., "z": ...}}.
+    """
     ws_url = f"ws://{linux_ip}:9090"
     ws = websocket.WebSocketApp(ws_url,
                                  on_open=lambda ws: on_open(ws, bbxpts),
@@ -91,6 +100,22 @@ def send_cobot_map(linux_ip, bbxpts):
     ws.run_forever()
 
 def get_cobot_pose(linux_ip, timeout=1):
+    """
+    Retrieves the current pose (position and orientation) of a collaborative robot (cobot)
+    from a remote Linux PC running ROS over WebSocket
+
+    The function starts listening for incoming pose data from the specified IP address, which
+    must belong to a ROS-enabled Linux system using WebSocket communication. It waits for up to
+    `timeout` seconds for the data to arrive. If no data is received within that time, it returns
+    a default Pose object with all fields (x, y, z, w) set to zero
+
+    Args:
+        linux_ip (str): IP address of the ROS-enabled Linux machine (WebSocket server)
+        timeout (int, optional): Maximum number of seconds to wait for pose data (default is 1)
+
+    Returns:
+        Pose: An object containing `position` (x, y, z) and `orientation` (x, y, z, w) fields
+    """
     global pose_data
     pose_data = None
     listen_for_pose(linux_ip)

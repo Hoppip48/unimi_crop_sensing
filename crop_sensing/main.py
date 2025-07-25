@@ -24,7 +24,7 @@ def main():
     
     # Divide the plants into clusters
     masks, bounding_boxes = find_plant.segment_plants(mask, plants_number)
-    find_plant.save_clustered_image(image, bounding_boxes)
+    find_plant.save_clustered_image(image, bounding_boxes) # documenta quando torni per riprendere la mano
 
     # Extract the 3D points from the clusters
     for m in masks:

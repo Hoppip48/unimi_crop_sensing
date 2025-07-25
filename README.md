@@ -2,8 +2,6 @@
 
 `unimi_crop_sensing` was created with the aim of offering a set of **simple and intuitive operations** to interact with the **ZED camera**. It consists of a toolkit for processing and segmenting images and point clouds acquired via the **ZED stereo camera**. The project is designed for precision agriculture applications, allowing you to identify plants in 2D and 3D, generate bounding boxes and communicate with a cobot through WebSocket in a ROS environment.
 
-https://github.com/Hoppip48/unimi_crop_sensing/
-
 ### Main features
 * Green segmentation with Excess Green Index
 * Plant clustering via KMeans
@@ -13,12 +11,12 @@ https://github.com/Hoppip48/unimi_crop_sensing/
 
 ### Built With
 
+* [Stereolabs ZED SDK](https://www.stereolabs.com/zed-sdk/) 
 * [OpenCV](https://opencv.org/)
 * [NumPy](https://numpy.org/)
 * [scikit-image](https://scikit-image.org/)
 * [scikit-learn](https://scikit-learn.org/)
 * [websocket-client](https://github.com/websocket-client/websocket-client)
-* [Stereolabs ZED SDK](https://www.stereolabs.com/zed-sdk/) 
 
 ## Getting Started
 
@@ -26,7 +24,7 @@ https://github.com/Hoppip48/unimi_crop_sensing/
 
 Make sure you have:
 - Python 3.9
-- ZED SDK properly installed and working
+- ZED SDK properly installed and working and you are connected to a **ZED camera**
 - ROS + rosbridge running if you use WebSocket
 - The libraries listed in `requirements.txt`
 

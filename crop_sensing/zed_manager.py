@@ -2,10 +2,25 @@ import pyzed.sl as sl
 import numpy as np
 import cv2
 
-### This file purpose is to manage the ZED camera ###
+### This file main purpose is to manage the ZED camera ###
 
 # === Initialize ZED ===
-def zed_init(pose):
+def zed_init(pose):    
+    """
+    Initializes a ZED camera with specific configuration parameters and sets its
+    transform based on a given cobot pose
+
+    Args:
+        pose (object): A pose object containing:
+            - position.x, position.y, position.z (in meters)
+            - orientation.x, orientation.y, orientation.z, orientation.w (quaternion)
+
+    Returns:
+        sl.Camera: A ZED camera object initialized and transformed according to the input pose
+
+    Raises:
+        SystemExit: If the camera fails to open
+    """
     zed = sl.Camera()
     init_params = sl.InitParameters()
     init_params.camera_resolution = sl.RESOLUTION.HD720
@@ -50,6 +65,22 @@ def memorize_images(image, depth_map, normal_map):
 
 # === Acquire ZED image and depth map ===
 def get_zed_image(zed, save=False):
+    """
+    Captures a single frame from a ZED camera, retrieving the RGB image, depth map,
+    normal map, and point cloud
+
+    Args:
+        zed (sl.Camera): An initialized and opened ZED camera object
+        save (bool, optional): If True, saves the RGB image, depth map, normal map,
+            and point cloud to the "data/" directory. Default is False
+
+    Returns:
+        tuple: A tuple containing:
+            - image (np.ndarray): The RGB image as a NumPy array
+            - depth_map (sl.Mat): The depth map in XYZRGBA format
+            - normal_map (sl.Mat): The normal map
+            - point_cloud (sl.Mat): The 3D point cloud in XYZRGBA format
+    """
     # Initialize variables
     runtime_parameters = sl.RuntimeParameters()
     image_zed = sl.Mat()

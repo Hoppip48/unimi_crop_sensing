@@ -49,6 +49,17 @@ def initialize_zed(zed, mesh=True):
     return runtime_parameters, filter_params
 
 def record_and_save(plant_name='plant',frames=300):
+    """
+    Captures spatial mapping data from a ZED camera over a specified number of frames,
+    extracts the spatial mesh, and saves it as a PLY file
+
+    Args:
+        plant_name (str): Name used for saving the output PLY file (e.g., "plant1")
+        frames (int): Number of frames to capture during spatial mapping
+
+    Raises:
+        RuntimeError: If the camera fails to initialize or grab frames
+    """
     # Create a ZED camera object
     zed = sl.Camera()
     
