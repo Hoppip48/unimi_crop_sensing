@@ -2,39 +2,32 @@ name: Upload Python Package
 
 # 👇 Questo workflow si attiva solo quando fai un push di un TAG come v0.1.0
 on:
-  push:
-    tags:
-      - 'v*'  # puoi usare anche 'v[0-9]+.[0-9]+.[0-9]+' per versioni più precise
+  workflow-dispatch:  # Permette di eseguire manualmente il workflow 
 
 jobs:
-  publish:
+  python-build-n-publish:
     name: Build and publish to PyPI
-    runs-on: ubuntu-latest  # usa un runner Linux
-
-    permissions:
-      id-token: write  # ⚠️ NECESSARIO per Trusted Publishing (senza token)
+    runs-on: ubuntu-latest 
 
     steps:
-      # 👇 Clona il tuo repository
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@main
 
-      # 👇 Imposta la versione di Python usata per build
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Initialize Python 
+        uses: actions/setup-python@v1
         with:
-          python-version: '3.9'  # 🔧 MODIFICA se usi un'altra versione (es. '3.10')
+          python-version: '3.9'  
 
-      # 👇 Installa gli strumenti per buildare il pacchetto
       - name: Install build dependencies
         run: |
-          python -m pip install --upgrade pip build
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install --upgrade pip
 
-      # 👇 Costruisce il pacchetto (crea dist/*.whl e dist/*.tar.gz)
       - name: Build package
-        run: python -m build
+          python setup.py sdist bdist_wheel
 
-      # 👇 Pubblica su PyPI usando trusted publishing (senza bisogno di token!)
       - name: Publish package to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@master
         with:
-          skip-existing: true  # se la versione esiste già, non va in errore
+          username: __token__
+          password: ${{ secrets.PYPI_PASSWORD }} 
+          repository_url: https://upload.pypi.org/legacy/

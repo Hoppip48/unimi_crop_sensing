@@ -10,3 +10,5 @@ __pycache__/
 crop_sensing.egg-info/
 dist/
 
+# Ignora mock (per testing)
+crop_sensing/mock.py
