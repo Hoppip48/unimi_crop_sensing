@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='crop_sensing',
+    name='unimi_crop_sensing',
     version='0.2',
     packages=find_packages(),
     install_requires=[
