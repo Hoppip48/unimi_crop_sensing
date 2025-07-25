@@ -18,5 +18,5 @@ setup(
     description='A toolkit for crop sensing using the ZED camera',
     long_description=description,
     long_description_content_type='text/markdown',
-    url="https://github.com/tuo-username/tuo-repo"
+    url="https://github.com/Hoppip48/unimi_crop_sensing"
 )
