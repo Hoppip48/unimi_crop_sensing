@@ -5,7 +5,7 @@ from sklearn.cluster import KMeans
 
 
 
-# === Trova piante filtrando il verde ===
+# === Filter plants using the excess green filter ===
 def filter_plants(image, default_T=0, kernel_dimension=1, cut_iterations=1, save_mask=False):
     # Calcola l'EXG (Excess Green) per il rilevamento del verde (2G-B-R)
     r, g, b = cv2.split(image)
@@ -34,12 +34,14 @@ def filter_plants(image, default_T=0, kernel_dimension=1, cut_iterations=1, save
     # Ritorna la maschera del verde
     return ColorSegmented
 
+# === Saves the clustered image with bounding boxes ===
 def save_clustered_image(image, bounding_boxes):
     # Draw bounding boxes on the original image for visualization
     for (x_min, y_min, x_max, y_max) in bounding_boxes:
         cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
     cv2.imwrite("crop_sensing/data/clusters.png", image)
 
+# === Segment plants using KMeans clustering ===
 def segment_plants(mask, n_plants):
     # Converti la maschera in coordinate 
     coords = np.column_stack(np.where(mask > 0))
@@ -63,7 +65,7 @@ def segment_plants(mask, n_plants):
         
     return masks, bounding_boxes
 
-# === estrai la profondità dei punti del cluster ===
+# === extract 3D points from the mask using the point cloud ===
 def extract_3d_points_from_mask(mask, point_cloud):
     ys, xs = np.where(mask > 0)
     points = []
@@ -75,13 +77,13 @@ def extract_3d_points_from_mask(mask, point_cloud):
 
     return np.array(points)
 
-# === Crea la bounding box 3D del cluster ===
+# === Find the edges of the 3D bounding box ===
 def compute_bbox_3d(points):
     bbox_min = np.min(points, axis=0)
     bbox_max = np.max(points, axis=0)
     return bbox_min, bbox_max
 
-# === Visualizza la bounding box 3D del cluster ===
+# === Create a 3D bounding box from the mask and point cloud ===
 def plot_3d_bbox(mask, point_cloud):
     
     # Estrai i punti 3D dalla maschera

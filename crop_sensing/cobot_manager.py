@@ -3,9 +3,9 @@ import json
 import time
 import threading
 
-pose_data = None  # globale condivisa
+pose_data = None  # shared global
 
-# === MANDARE MAPPA E OGGETTI ===
+# === SEND MAP STRUCTURE ===
 def on_open(ws, bbxpts):
     print("Connected to rosbridge")
 
@@ -55,7 +55,7 @@ def on_error(ws, error):
 def on_close(ws, close_status_code, close_msg):
     print("Closed connection")
 
-# === RICEVERE POSIZIONE E ORIENTAMENTO ===
+# === RECEIVE POSE ===
 def on_message_pose(ws, message):
     global pose_data
     data = json.loads(message)
