@@ -42,17 +42,29 @@ def filter_plants(image, default_T=0, kernel_dimension=1, cut_iterations=1, save
 
     # DEBUG: Apply the mask to the original image and save it
     if save_mask:
-        masked_image = cv2.bitwise_and(image, image, mask=ColorSegmented)
-        cv2.imwrite("crop_sensing/data/excess_green.png", masked_image)
+        cv2.imwrite("crop_sensing/data/excess_green.png", ColorSegmented)
 
     return ColorSegmented
 
 # === Saves the clustered image with bounding boxes ===
-def save_clustered_image(image, bounding_boxes):
-    # Draw bounding boxes on the original image for visualization
-    for (x_min, y_min, x_max, y_max) in bounding_boxes:
-        cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
-    cv2.imwrite("crop_sensing/data/clusters.png", image)
+def save_clustered_image(image, bbxpts):
+    edges = [(0,1),(0,2),(1,3),(2,3),(4,5),(4,6),(5,7),(6,7),(0,4),(1,5),(2,6),(3,7)]
+    for bb in bbxpts:
+        x0,y0,z0 = bb["min"]["x"], bb["min"]["y"], bb["min"]["z"]
+        x1,y1,z1 = bb["max"]["x"], bb["max"]["y"], bb["max"]["z"]
+        # 8 vertici
+        V = [
+            (x0,y0),(x1,y0),(x0,y1),(x1,y1),
+            (x0,y0),(x1,y0),(x0,y1),(x1,y1)
+        ]
+        # offset Z per distinguere front/back (opzionale, qui solo visivo)
+        V[4] = (x0, y0 - int(z1-z0))
+        V[5] = (x1, y0 - int(z1-z0))
+        V[6] = (x0, y1 - int(z1-z0))
+        V[7] = (x1, y1 - int(z1-z0))
+        for i,j in edges:
+            cv2.line(image, V[i], V[j], (0,255,0), 2)
+    cv2.imwrite("crop_sensing/data/bboxes.png", image)
 
 # === Segment plants using KMeans clustering ===
 def segment_plants(mask, n_plants):

@@ -16,19 +16,28 @@ def main():
     # Initialize the ZED camera
     zed = zed_manager.zed_init(pose)
     
-    # Capture the environment with the ZED camera
-    image, depth_map, normal_map, point_cloud = zed_manager.get_zed_image(zed, save=True)
+    # Start loop
+    frame = 1
+    for frame in range(100):
+        # Capture the environment with the ZED camera
+        image, depth_map, normal_map, point_cloud = zed_manager.get_zed_image(zed, save=True)
 
-    # Filter the plants from the background
-    mask = find_plant.filter_plants(image, save_mask=True)
-    
-    # Divide the plants into clusters
-    masks, bounding_boxes = find_plant.segment_plants(mask, plants_number)
-    find_plant.save_clustered_image(image, bounding_boxes) # documenta quando torni per riprendere la mano
-
-    # Extract the 3D points from the clusters
-    for m in masks:
-        bbxpts = find_plant.plot_3d_bbox(m, point_cloud)
+        # Filter the plants from the background
+        mask = find_plant.filter_plants(image, save_mask=True)
+        
+        # Divide the plants into clusters
+        masks, bounding_boxes = find_plant.segment_plants(mask, plants_number)
+        find_plant.save_clustered_image(image, bounding_boxes)
+        
+        # Save bounding boxes to a txt file in crop_sensing/data
+        log_file = "crop_sensing/data/log.txt"
+        with open(log_file, "w") as f:
+            for i, bbox in enumerate(bounding_boxes):
+                f.write(f"Frame {frame}: {bbox}\n")
+        
+        # Extract the 3D points from the clusters
+        for m in masks:
+            bbxpts = find_plant.plot_3d_bbox(m, point_cloud)
         
     # Communicate the bounding boxes to the cobot (only if the cobot is operated in another machine)
     cobot_manager.send_cobot_map(linux_ip, bbxpts)
