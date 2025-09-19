@@ -70,9 +70,9 @@ def zed_init(pose=None):
 
 # DEBUG: Save the images and depth map for testing purposes
 def memorize_images(image, depth_map, normal_map):
-    image_path = "data/saved_image.png"
-    depth_map_path = "data/saved_depth_map.png"
-    normal_map_path = "data/saved_normal_map.png"
+    image_path = "crop_sensing/data/saved_image.png"
+    depth_map_path = "crop_sensing/data/saved_depth_map.png"
+    normal_map_path = "crop_sensing/data/saved_normal_map.png"
     # Transform the normal map to a format suitable for saving
     normal_map_data = normal_map.get_data()
     normal_map_image = ((normal_map_data[:, :, :3] + 1) / 2 * 255).astype(np.uint8)
@@ -125,7 +125,7 @@ def get_zed_image(zed, save=False):
     if save:
         memorize_images(image, depth_map, normal_map)
         # Salva il point cloud in un file PLY
-        point_cloud.write("data/point_cloud.ply")
+        point_cloud.write("crop_sensing/data/point_cloud.ply")
         print(f"\"Salvato acquisizioni in \\data\"")
     
     return image, depth_map, normal_map, point_cloud

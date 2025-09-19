@@ -42,8 +42,7 @@ def filter_plants(image, default_T=50, kernel_dimension=1, cut_iterations=1, sav
 
     # DEBUG: Apply the mask to the original image and save it
     if save_mask:
-        masked_image = cv2.bitwise_and(image, image, mask=ColorSegmented)
-        cv2.imwrite("crop_sensing/data/excess_green.png", masked_image)
+        cv2.imwrite("crop_sensing/data/excess_green.png", ColorSegmented)
 
     return ColorSegmented
 
