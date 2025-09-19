@@ -4,16 +4,35 @@ import cv2
 
 ### This file main purpose is to manage the ZED camera ###
 
+class Pose:
+    class Position:
+        def __init__(self):
+            self.x = 0
+            self.y = 0
+            self.z = 0
+
+    class Orientation:
+        def __init__(self):
+            self.x = 0
+            self.y = 0
+            self.z = 0
+            self.w = 0
+
+    def __init__(self):
+        self.position = self.Position()
+        self.orientation = self.Orientation()
+
 # === Initialize ZED ===
-def zed_init(pose):    
+def zed_init(pose=None):    
     """
     Initializes a ZED camera with specific configuration parameters and sets its
     transform based on a given cobot pose
 
     Args:
-        pose (object): A pose object containing:
+        pose (object, optional): A pose object containing:
             - position.x, position.y, position.z (in meters)
             - orientation.x, orientation.y, orientation.z, orientation.w (quaternion)
+        If None, defaults to all zeros.
 
     Returns:
         sl.Camera: A ZED camera object initialized and transformed according to the input pose
@@ -23,7 +42,7 @@ def zed_init(pose):
     """
     zed = sl.Camera()
     init_params = sl.InitParameters()
-    init_params.camera_resolution = sl.RESOLUTION.HD720
+    init_params.camera_resolution = sl.RESOLUTION.HD2K
     init_params.depth_mode = sl.DEPTH_MODE.NEURAL_PLUS
     init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Z_UP 
     init_params.depth_maximum_distance = 2
@@ -33,6 +52,9 @@ def zed_init(pose):
     if zed.open(init_params) != sl.ERROR_CODE.SUCCESS:
         print("Impossibile aprire la ZED")
         exit(1)
+
+    if pose is None:
+        pose = Pose()
     
     translation = sl.Translation(pose.position.x, pose.position.y, pose.position.z)
     orientation = sl.Orientation()

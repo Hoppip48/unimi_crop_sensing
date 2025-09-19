@@ -6,7 +6,7 @@ from sklearn.cluster import KMeans
 
 
 # === Filter plants using the excess green filter ===
-def filter_plants(image, default_T=0, kernel_dimension=1, cut_iterations=1, save_mask=False):
+def filter_plants(image, default_T=50, kernel_dimension=1, cut_iterations=1, save_mask=False):
     """
     This function detects green areas (typically vegetation or plants) in an RGB image
     by calculating the ExG index (2G - R - B), applying a threshold, and performing
@@ -48,12 +48,21 @@ def filter_plants(image, default_T=0, kernel_dimension=1, cut_iterations=1, save
     return ColorSegmented
 
 # === Saves the clustered image with bounding boxes ===
-def save_clustered_image(image, bounding_boxes):
-    # Draw bounding boxes on the original image for visualization
-    for (x_min, y_min, x_max, y_max) in bounding_boxes:
+def save_clustered_image(image, bounding_boxes):    
+    """
+    Draws bounding boxes on the input image to visualize clustered plants and
+    saves the resulting image to `data/clusters.png`
+
+    Args:
+        image (np.ndarray): Original RGB image where bounding boxes will be drawn.
+        bounding_boxes (list of tuples): List of 2D bounding boxes, each in the form
+            (x_min, y_min, x_max, y_max).
+    """
+    for single_bbx in bounding_boxes:
+        x_min, y_min, x_max, y_max = map(int, single_bbx)
         cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)
     cv2.imwrite("crop_sensing/data/clusters.png", image)
-
+    
 # === Segment plants using KMeans clustering ===
 def segment_plants(mask, n_plants):
     """
@@ -84,12 +93,12 @@ def segment_plants(mask, n_plants):
         masks[label][y, x] = 1
 
     # Calculate 2D bounding boxes for each mask
-    for plant_mask in enumerate(masks):
+    for plant_mask in masks:
         ys, xs = np.where(plant_mask > 0)
         if len(xs) > 0 and len(ys) > 0:
             x_min, x_max = xs.min(), xs.max()
             y_min, y_max = ys.min(), ys.max()
-            bounding_boxes.append((x_min, y_min, x_max, y_max))
+            bounding_boxes.append((int(x_min), int(y_min), int(x_max), int(y_max)))
         
     return masks, bounding_boxes
 
@@ -106,7 +115,7 @@ def extract_3d_points_from_mask(mask, point_cloud):
     return np.array(points)
 
 # === Create a 3D bounding box from the mask and point cloud ===
-def plot_3d_bbox(mask, point_cloud):
+def get_3d_bbox(mask, point_cloud):
     """
     Computes the 3D bounding box coordinates for a segmented region defined by a binary mask
     using the corresponding point cloud data.

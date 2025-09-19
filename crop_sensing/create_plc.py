@@ -12,7 +12,7 @@ def initialize_zed(zed, mesh=True):
     init_params.camera_resolution = sl.RESOLUTION.HD2K  # Set the camera resolution 
     init_params.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Z_UP # Use a right-handed Y-up coordinate system
     init_params.coordinate_units = sl.UNIT.METER  # Set units in meters
-    init_params.depth_maximum_distance = 5  # Set the maximum depth sensing distance to 1m
+    init_params.depth_maximum_distance = 2  # Set the maximum depth sensing distance to 1m
     init_params.depth_minimum_distance = 0.2  # Set the minimum depth sensing distance to 0.2m
 
     err = zed.open(init_params)
