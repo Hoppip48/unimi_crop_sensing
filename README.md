@@ -77,6 +77,8 @@ def main():
     zed.close()
 ``` 
 
+**Note:** The `pipeline.py` file contains a ready-to-run example with all the necessary components to extract bounding boxes and send them to the Dobot cobot.
+
 <!-- CONTACT -->
 ## Contact
 

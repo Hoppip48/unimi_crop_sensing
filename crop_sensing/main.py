@@ -35,7 +35,7 @@ def main():
         
         # Extract the 3D points from the clusters
         for m in masks:
-            bbxpts = find_plant.plot_3d_bbox(m, point_cloud)
+            bbxpts = find_plant.get_3d_bbox(m, point_cloud)
         frame += 1
         
     # Communicate the bounding boxes to the cobot (only if the cobot is operated in another machine)

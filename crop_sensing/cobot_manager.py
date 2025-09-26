@@ -16,6 +16,7 @@ def on_open(ws, bbxpts):
     }
     ws.send(json.dumps(advertise_msg))
 
+    # Convert numpy types to native Python types for JSON serialization
     map_msg = {
         "op": "publish",
         "topic": "/Boing",
@@ -29,14 +30,14 @@ def on_open(ws, bbxpts):
                     "target": True,
                     "shape": {
                         "low_left": {
-                            "x": bbxpts['min']['x'],
-                            "y": bbxpts['min']['y'],
-                            "z": bbxpts['min']['z']
+                            "x": float(bbxpts['min']['x']),
+                            "y": float(bbxpts['min']['y']),
+                            "z": float(bbxpts['min']['z'])
                         },
                         "top_right": {
-                            "x": bbxpts['max']['x'],
-                            "y": bbxpts['max']['y'],
-                            "z": bbxpts['max']['z']
+                            "x": float(bbxpts['max']['x']),
+                            "y": float(bbxpts['max']['y']),
+                            "z": float(bbxpts['max']['z'])
                         }
                     },
                     "possible_trajectories": []
@@ -45,8 +46,12 @@ def on_open(ws, bbxpts):
         }
     }
 
-    ws.send(json.dumps(map_msg))
-    print("Map message sent:", json.dumps(map_msg, indent=2))
+    try:
+        ws.send(json.dumps(map_msg))
+        print("Map message sent:", json.dumps(map_msg, indent=2))
+    except Exception as e:
+        print(f"Error sending map message: {e}")
+        raise
 
 
 def on_error(ws, error):
