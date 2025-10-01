@@ -52,8 +52,7 @@ def on_open(ws, bbxpts):
     except Exception as e:
         print(f"Error sending map message: {e}")
         raise
-
-
+    
 def on_error(ws, error):
     print("Error:", error)
 
@@ -130,10 +129,9 @@ def get_cobot_pose(linux_ip, timeout=1):
         print("Waiting for pose...")
         time.sleep(0.5)
 
-    #if pose_data is None:
-    #    raise TimeoutError("Timeout while waiting for cobot pose")
-    
-    #return pose_data
+    if pose_data is not None:
+        print("Pose data received:", pose_data)
+        return pose_data
     
     class Pose:
         class Position:
