@@ -29,18 +29,18 @@ def on_open(ws, bbxpts):
                     "target": True,
                     "shape": {
                         "low_left": {
-                            "x": bbxpts['min']['x'],
-                            "y": bbxpts['min']['y'],
-                            "z": bbxpts['min']['z']
+                            "x": bbx['min']['x'],
+                            "y": bbx['min']['y'],
+                            "z": bbx['min']['z']
                         },
                         "top_right": {
-                            "x": bbxpts['max']['x'],
-                            "y": bbxpts['max']['y'],
-                            "z": bbxpts['max']['z']
+                            "x": bbx['max']['x'],
+                            "y": bbx['max']['y'],
+                            "z": bbx['max']['z']
                         }
                     },
                     "possible_trajectories": []
-                }
+                } for bbx in bbxpts
             ]
         }
     }

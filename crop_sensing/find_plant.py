@@ -37,7 +37,7 @@ def filter_plants(image, default_T=50, kernel_dimension=1, cut_iterations=1, sav
     # Apply a morphological operation to clean the mask
     kernel = np.ones((kernel_dimension, kernel_dimension), np.uint8)
     erosion = cv2.erode(ColorSegmented, kernel, iterations=cut_iterations)
-    dilation = cv2.dilate(erosion, kernel, iterations=cut_iterations)
+    dilation = cv2.dilate(erosion, kernel, iterations=cut_iterations-1) # make sure not to include elements of the background
     ColorSegmented = dilation
 
     # DEBUG: Apply the mask to the original image and save it
