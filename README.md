@@ -72,10 +72,12 @@ def main():
     cobot_manager.send_cobot_map(linux_ip, bbxpts)
 
     # Create point cloud (this will create a .ply file by taking a video of the environment)
+    zed.close()
     create_plc.record_and_save(plant_name='piantina1', frames=300)
 
-    zed.close()
 ``` 
+
+**Note:** The `pipeline.py` file contains a ready-to-run example with all the necessary components to extract bounding boxes and send them to the Dobot cobot.
 
 <!-- CONTACT -->
 ## Contact

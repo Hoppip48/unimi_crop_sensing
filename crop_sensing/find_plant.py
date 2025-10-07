@@ -133,6 +133,11 @@ def get_3d_bbox(mask, point_cloud):
     # Extract 3D points from the mask using the point cloud
     points = extract_3d_points_from_mask(mask, point_cloud)
     
+    # Check if there are no points
+    if points.size == 0:
+        print("No points found in the mask. Returning None.")
+        return None
+    
     # Find the edges of the 3D bounding box
     bbox_min = np.min(points, axis=0)
     bbox_max = np.max(points, axis=0)
@@ -140,12 +145,13 @@ def get_3d_bbox(mask, point_cloud):
     x1, y1, z1 = bbox_max[0], bbox_max[1], bbox_max[2]
 
     bbxpts = {
-        "min": {"x": x0, "y": y0, "z": z0},
-        "max": {"x": x1, "y": y1, "z": z1}
+        "min": {"x": float(x0), "y": float(y0), "z": float(z0)},
+        "max": {"x": float(x1), "y": float(y1), "z": float(z1)}
     }
 
     # DEBUG: Print the bounding box coordinates
     print(f"Bounding Box Min: {bbxpts['min']}, Bounding Box Max: {bbxpts['max']}")
+    print(bbxpts)  # Added for debugging serialization
 
     return bbxpts
 

@@ -16,6 +16,7 @@ def on_open(ws, bbxpts):
     }
     ws.send(json.dumps(advertise_msg))
 
+    # Convert numpy types to native Python types for JSON serialization
     map_msg = {
         "op": "publish",
         "topic": "/Boing",
@@ -45,10 +46,13 @@ def on_open(ws, bbxpts):
         }
     }
 
-    ws.send(json.dumps(map_msg))
-    print("Map message sent:", json.dumps(map_msg, indent=2))
-
-
+    try:
+        ws.send(json.dumps(map_msg))
+        print("Map message sent:", json.dumps(map_msg, indent=2))
+    except Exception as e:
+        print(f"Error sending map message: {e}")
+        raise
+    
 def on_error(ws, error):
     print("Error:", error)
 
@@ -125,10 +129,9 @@ def get_cobot_pose(linux_ip, timeout=1):
         print("Waiting for pose...")
         time.sleep(0.5)
 
-    #if pose_data is None:
-    #    raise TimeoutError("Timeout while waiting for cobot pose")
-    
-    #return pose_data
+    if pose_data is not None:
+        print("Pose data received:", pose_data)
+        return pose_data
     
     class Pose:
         class Position:

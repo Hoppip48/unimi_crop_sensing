@@ -75,9 +75,13 @@ def memorize_images(image, depth_map, normal_map):
     normal_map_path = "crop_sensing/data/saved_normal_map.png"
     # Transform the normal map to a format suitable for saving
     normal_map_data = normal_map.get_data()
+    # Handle NaN and Inf values before casting
+    normal_map_data = np.nan_to_num(normal_map_data, nan=0.0, posinf=1.0, neginf=-1.0)
     normal_map_image = ((normal_map_data[:, :, :3] + 1) / 2 * 255).astype(np.uint8)
     # Normalize the depth map for visualization
     depth_map_data = depth_map.get_data()
+    # Handle NaN and Inf values in depth map
+    depth_map_data = np.nan_to_num(depth_map_data, nan=0.0, posinf=255.0, neginf=0.0)
     depth_map_norm = cv2.normalize(depth_map_data[:, :, 2], None, 0, 255, cv2.NORM_MINMAX)
     depth_map_image = depth_map_norm.astype(np.uint8)
     # Save the images
