@@ -1,9 +1,16 @@
 import pyzed.sl as sl
 import numpy as np
 import cv2
-from unimi_crop_sensing.crop_sensing.find_plant import ensure_data
+import os
 
 ### This file main purpose is to manage the ZED camera ###
+
+def ensure_data():
+    """
+    Ensures that the 'crop_sensing/data' folder exists.
+    """
+    folder_path = "crop_sensing/data"
+    os.makedirs(folder_path, exist_ok=True)
 
 class Pose:
     class Position:
@@ -22,6 +29,30 @@ class Pose:
     def __init__(self):
         self.position = self.Position()
         self.orientation = self.Orientation()
+
+def update_pose(zed, pose):
+    """
+    EXPERIMENTAL
+    Updates the ZED camera's transform based on the given pose.
+
+    Args:
+        zed (sl.Camera): The ZED camera object.
+        pose (Pose): The new pose to set (with position and orientation).
+    """
+    pose.position.x += +0.01  # Offset X position
+    pose.position.y += -0.02  # Offset Y position
+    pose.position.z += +0.07  # Offset Z position
+    translation = sl.Translation(pose.position.x, pose.position.y, pose.position.z)
+    orientation = sl.Orientation()
+    orientation.init_vector(
+        pose.orientation.x,
+        pose.orientation.y,
+        pose.orientation.z,
+        pose.orientation.w
+    )
+    zed_tf = sl.Transform()
+    zed_tf.init_orientation_translation(orientation, translation)
+    zed.reset_positional_tracking(zed_tf)
 
 # === Initialize ZED ===
 def zed_init(pose=None):    
@@ -57,38 +88,9 @@ def zed_init(pose=None):
     if pose is None:
         pose = Pose()
     
-    translation = sl.Translation(pose.position.x, pose.position.y, pose.position.z)
-    orientation = sl.Orientation()
-    orientation.init_vector(pose.orientation.x,
-                        pose.orientation.y,
-                        pose.orientation.z,
-                        pose.orientation.w)
-
-    zed_tf = sl.Transform()
-    zed_tf.init_orientation_translation(orientation, translation)
+    update_pose(zed, pose)
     
     return zed
-
-def update_pose(zed, pose):
-    """
-    EXPERIMENTAL
-    Updates the ZED camera's transform based on the given pose.
-
-    Args:
-        zed (sl.Camera): The ZED camera object.
-        pose (Pose): The new pose to set (with position and orientation).
-    """
-    translation = sl.Translation(pose.position.x, pose.position.y, pose.position.z)
-    orientation = sl.Orientation()
-    orientation.init_vector(
-        pose.orientation.x,
-        pose.orientation.y,
-        pose.orientation.z,
-        pose.orientation.w
-    )
-    zed_tf = sl.Transform()
-    zed_tf.init_orientation_translation(orientation, translation)
-    zed.set_pose(zed_tf)
 
 # DEBUG: Save the images and depth map for testing purposes
 def memorize_images(image, depth_map, normal_map):
@@ -136,6 +138,7 @@ def get_zed_image(zed, save=False):
     depth_map = sl.Mat()
     point_cloud = sl.Mat()
     normal_map = sl.Mat()
+    image = None
 
     # Retrieve the image and depth map
     print("Acquisizione misure dalla camera...")
@@ -148,11 +151,11 @@ def get_zed_image(zed, save=False):
         image = cv2.cvtColor(image_zed.get_data(), cv2.COLOR_RGBA2RGB)
         break
 
-    # DEBUG: Save the data
-    if save:
+    if save and image is not None:
         memorize_images(image, depth_map, normal_map)
         # Salva il point cloud in un file PLY
         point_cloud.write("crop_sensing/data/point_cloud.ply")
+        print(f"\"Salvato acquisizioni in \\data\"")
         print(f"\"Salvato acquisizioni in \\data\"")
     
     return image, depth_map, normal_map, point_cloud

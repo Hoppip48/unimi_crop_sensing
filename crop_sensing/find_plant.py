@@ -5,21 +5,13 @@ from sklearn.cluster import KMeans
 import os
 
 
-def ensure_data(filename=None):
+def ensure_data():
     """
-    Ensures that the 'crop_sensing/data' folder exists. If a filename is provided, creates an empty .ply file.
-
-    Args:
-        filename (str, optional): Name of the .ply file to create. If None, no .ply file is created.
+    Ensures that the 'crop_sensing/data' folder exists.
     """
     folder_path = "crop_sensing/data"
     os.makedirs(folder_path, exist_ok=True)
-    if filename:
-        ply_path = os.path.join(folder_path, filename)
-        # Write minimal PLY header for an empty file
-        with open(ply_path, "w") as f:
-            f.write("ply\nformat ascii 1.0\nelement vertex 0\nproperty float x\nproperty float y\nproperty float z\nend_header\n")
-
+    
 # === Filter plants using the excess green filter ===
 def filter_plants(image, default_T=50, kernel_dimension=1, cut_iterations=1, save_mask=False):
     """
