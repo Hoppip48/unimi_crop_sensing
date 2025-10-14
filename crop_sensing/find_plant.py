@@ -2,8 +2,23 @@ import cv2
 import numpy as np
 from skimage import filters
 from sklearn.cluster import KMeans
+import os
 
 
+def ensure_data(filename=None):
+    """
+    Ensures that the 'crop_sensing/data' folder exists. If a filename is provided, creates an empty .ply file.
+
+    Args:
+        filename (str, optional): Name of the .ply file to create. If None, no .ply file is created.
+    """
+    folder_path = "crop_sensing/data"
+    os.makedirs(folder_path, exist_ok=True)
+    if filename:
+        ply_path = os.path.join(folder_path, filename)
+        # Write minimal PLY header for an empty file
+        with open(ply_path, "w") as f:
+            f.write("ply\nformat ascii 1.0\nelement vertex 0\nproperty float x\nproperty float y\nproperty float z\nend_header\n")
 
 # === Filter plants using the excess green filter ===
 def filter_plants(image, default_T=50, kernel_dimension=1, cut_iterations=1, save_mask=False):
@@ -42,7 +57,9 @@ def filter_plants(image, default_T=50, kernel_dimension=1, cut_iterations=1, sav
 
     # DEBUG: Apply the mask to the original image and save it
     if save_mask:
-        cv2.imwrite("crop_sensing/data/excess_green.png", ColorSegmented)
+        ensure_data()
+        masked_image = cv2.bitwise_and(image, image, mask=ColorSegmented)
+        cv2.imwrite("crop_sensing/data/filter.png", masked_image)
 
     return ColorSegmented
 
@@ -57,6 +74,7 @@ def save_clustered_image(image, bounding_boxes):
         bounding_boxes (list of tuples): List of 2D bounding boxes, each in the form
             (x_min, y_min, x_max, y_max).
     """
+    ensure_data()
     for single_bbx in bounding_boxes:
         x_min, y_min, x_max, y_max = map(int, single_bbx)
         cv2.rectangle(image, (x_min, y_min), (x_max, y_max), (0, 255, 0), 2)

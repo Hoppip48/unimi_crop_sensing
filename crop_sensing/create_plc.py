@@ -4,6 +4,8 @@ import sys
 
 import pyzed.sl as sl
 
+from unimi_crop_sensing.crop_sensing.find_plant import ensure_data
+
 def initialize_zed(zed, mesh=True):
     # Set configuration parameters
     init_params = sl.InitParameters()
@@ -86,8 +88,9 @@ def record_and_save(plant_name='plant',frames=300):
     zed.extract_whole_spatial_map(py_point_cloud) 
          
     # Save the mesh
-    py_point_cloud.save(f"data\{plant_name}.ply") 
-    
+    ensure_data(plant_name)
+    py_point_cloud.save(f"data/{plant_name}.ply")
+
     # Disable configurations and close the camera
     zed.disable_spatial_mapping()
     zed.disable_positional_tracking()

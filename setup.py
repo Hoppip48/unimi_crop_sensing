@@ -13,7 +13,8 @@ setup(
         'numpy',
         'scikit-image',
         'scikit-learn',
-        'websocket'
+        'websocket',
+        'os'
     ],
     description='A toolkit for crop sensing using the ZED camera',
     long_description=description,

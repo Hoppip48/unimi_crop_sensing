@@ -1,6 +1,7 @@
 import pyzed.sl as sl
 import numpy as np
 import cv2
+from unimi_crop_sensing.crop_sensing.find_plant import ensure_data
 
 ### This file main purpose is to manage the ZED camera ###
 
@@ -68,8 +69,30 @@ def zed_init(pose=None):
     
     return zed
 
+def update_pose(zed, pose):
+    """
+    EXPERIMENTAL
+    Updates the ZED camera's transform based on the given pose.
+
+    Args:
+        zed (sl.Camera): The ZED camera object.
+        pose (Pose): The new pose to set (with position and orientation).
+    """
+    translation = sl.Translation(pose.position.x, pose.position.y, pose.position.z)
+    orientation = sl.Orientation()
+    orientation.init_vector(
+        pose.orientation.x,
+        pose.orientation.y,
+        pose.orientation.z,
+        pose.orientation.w
+    )
+    zed_tf = sl.Transform()
+    zed_tf.init_orientation_translation(orientation, translation)
+    zed.set_pose(zed_tf)
+
 # DEBUG: Save the images and depth map for testing purposes
 def memorize_images(image, depth_map, normal_map):
+    ensure_data()
     image_path = "crop_sensing/data/saved_image.png"
     depth_map_path = "crop_sensing/data/saved_depth_map.png"
     normal_map_path = "crop_sensing/data/saved_normal_map.png"
