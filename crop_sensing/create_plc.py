@@ -1,10 +1,22 @@
-import pyzed.sl as sl
-import time
-import sys
-
+import os
 import pyzed.sl as sl
 
-from unimi_crop_sensing.crop_sensing.find_plant import ensure_data
+def ensure_data(filename=None):
+    """
+    Ensures that the 'crop_sensing/data' folder exists. If a filename is provided, creates an empty .ply file.
+
+    Args:
+        filename (str, optional): Name of the .ply file to create. If None, no .ply file is created.
+    """
+    folder_path = "crop_sensing/data"
+    os.makedirs(folder_path, exist_ok=True)
+    if filename:
+        filename = f"{filename}.ply"
+        ply_path = os.path.join(folder_path, filename)
+        # Write minimal PLY header for an empty file
+        with open(ply_path, "w") as f:
+            f.write("ply\nformat ascii 1.0\nelement vertex 0\nproperty float x\nproperty float y\nproperty float z\nend_header\n")
+
 
 def initialize_zed(zed, mesh=True):
     # Set configuration parameters
@@ -73,6 +85,7 @@ def record_and_save(plant_name='plant',frames=300):
 
     # Grab data 
     timer = 0
+    mapping_state = "UNAVAILABLE"  # Initialize mapping_state with a default value
     while timer <= frames:
         # Grab a new image and depth map
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:

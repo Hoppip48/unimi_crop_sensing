@@ -1,26 +1,26 @@
-import zed_manager
 import find_plant
+import zed_manager
 import cobot_manager
 import create_plc
-import cv2
-import numpy as np
 
 # testing parameters
 linux_ip = "192.168.5.100"
-plants_number = 1
+plants_number = 2
 
 # This function is used to test the functionalities of the crop sensing module
 def main():
 
     # Initialize the ZED camera
-    zed = zed_manager.zed_init(pose=cobot_manager.get_cobot_pose(linux_ip))
+    zed = zed_manager.zed_init()
+    pose=cobot_manager.get_cobot_pose(linux_ip)
+    zed_manager.update_pose(zed,pose)
     
     frame = 1
     
     # Start loop
     for frame in range(1):
         # Capture the environment with the ZED camera
-        image, depth_map, normal_map, point_cloud = zed_manager.get_zed_image(zed, save=False)
+        image, depth_map, normal_map, point_cloud = zed_manager.get_zed_image(zed, save=True)
 
         # Filter the plants from the background
         mask = find_plant.filter_plants(image, default_T=50, save_mask=True)
@@ -40,7 +40,7 @@ def main():
         # Extract the 3D points from the clusters
         bbxpts = []
         for m in masks:
-            bbxpts.append(find_plant.plot_3d_bbox(m, point_cloud))
+            bbxpts.append(find_plant.get_3d_bbox(m, point_cloud))
         frame += 1
         
         # Communicate the bounding boxes to the cobot (only if the cobot is operated in another machine)
@@ -50,11 +50,10 @@ def main():
     zed.close()
     
     # Create point cloud (this will create a .ply file by taking a video of the environment)
-    create_plc.record_and_save(plant_name='piantina1', frames=300)
+    #create_plc.record_and_save(plant_name='piantina1', frames=300)
 
 
 
 if __name__ == "__main__":
     main()
     
-
