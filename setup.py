@@ -5,7 +5,7 @@ with open('README.md', 'r') as f:
 
 setup(
     name='unimi_crop_sensing',
-    version='1.1',
+    version='1.2',
     packages=find_packages(),
     install_requires=[
         'opencv-python',
@@ -13,8 +13,7 @@ setup(
         'numpy',
         'scikit-image',
         'scikit-learn',
-        'websocket',
-        'os'
+        'websocket'
     ],
     description='A toolkit for crop sensing using the ZED camera',
     long_description=description,
