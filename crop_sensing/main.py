@@ -44,13 +44,13 @@ def main():
         frame += 1
         
         # Communicate the bounding boxes to the cobot (only if the cobot is operated in another machine)
-        if bbxpts is not None:
-            cobot_manager.send_cobot_map(linux_ip, bbxpts)
+        #if bbxpts is not None:
+            #cobot_manager.send_cobot_map(linux_ip, bbxpts)
 
     zed.close()
     
     # Create point cloud (this will create a .ply file by taking a video of the environment)
-    #create_plc.record_and_save(plant_name='piantina1', frames=300)
+    create_plc.record_and_save(plant_name='piantina1', frames=30, mesh=False)
 
 
 

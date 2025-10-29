@@ -37,17 +37,15 @@ def initialize_zed(zed, mesh=True):
     # Set positional tracking parameters
     tracking_parameters = sl.PositionalTrackingParameters()
     
+    
     # Set spatial mapping parameters
     mapping_parameters = sl.SpatialMappingParameters()
     
     mapping_parameters.resolution_meter = 0.01 # Set the map resolution to 1 cm
     mapping_parameters.range_meter = 2 # Set the mapping range to 2 meter
-    
-    if mesh:
-        mapping_parameters.map_type = sl.SPATIAL_MAP_TYPE.MESH # Use mesh mapping
-    else:
-        mapping_parameters.map_type = sl.SPATIAL_MAP_TYPE.FUSED_POINT_CLOUD # Use point cloud mapping
-    
+    mapping_parameters.map_type = (
+        sl.SPATIAL_MAP_TYPE.MESH if mesh else sl.SPATIAL_MAP_TYPE.FUSED_POINT_CLOUD
+    )
     # Set mesh filter parameters
     filter_params = sl.MeshFilterParameters()
     filter_params.set(sl.MESH_FILTER.LOW)
@@ -62,7 +60,7 @@ def initialize_zed(zed, mesh=True):
     
     return runtime_parameters, filter_params
 
-def record_and_save(plant_name='plant',frames=300):
+def record_and_save(plant_name='plant',frames=300, mesh=False):
     """
     Captures spatial mapping data from a ZED camera over a specified number of frames,
     extracts the spatial mesh, and saves it as a PLY file
@@ -78,10 +76,13 @@ def record_and_save(plant_name='plant',frames=300):
     zed = sl.Camera()
     
     # Initialize the ZED camera with the configuration parameters
-    runtime_parameters, filter_params = initialize_zed(zed, False)  
+    runtime_parameters, filter_params = initialize_zed(zed, mesh)  
     
     # Create a PLY object
-    py_point_cloud = sl.FusedPointCloud() 
+    if mesh:
+        map = sl.Mesh()
+    else:
+        map = sl.FusedPointCloud()
 
     # Grab data 
     timer = 0
@@ -92,17 +93,20 @@ def record_and_save(plant_name='plant',frames=300):
             mapping_state = zed.get_spatial_mapping_state()
 
         # DEBUG: Print spatial mapping state
-        print("\rImages captured: {0} / {2} || {1}".format(timer, mapping_state, frames))
+        print("\rImages captured: {0} / {2} || {1}".format(timer, mapping_state, frames), end="")
         
         timer = timer + 1
                         
 
     # Extract the mesh
-    zed.extract_whole_spatial_map(py_point_cloud) 
+    zed.extract_whole_spatial_map(map) 
          
     # Save the mesh
     ensure_data(plant_name)
-    py_point_cloud.save(f"data/{plant_name}.ply")
+    if mesh:
+        map.save(f"crop_sensing/data/{plant_name}.obj", typeMesh=sl.MESH_FILE_FORMAT.OBJ)
+    else:
+        map.save(f"crop_sensing/data/{plant_name}.ply", typeMesh=sl.MESH_FILE_FORMAT.PLY)
 
     # Disable configurations and close the camera
     zed.disable_spatial_mapping()
@@ -111,4 +115,4 @@ def record_and_save(plant_name='plant',frames=300):
     
         
 if __name__ == "__main__":
-    record_and_save()
+    record_and_save(frames=300, mesh=False)
