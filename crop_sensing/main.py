@@ -50,7 +50,7 @@ def main():
     zed.close()
     
     # Create point cloud (this will create a .ply file by taking a video of the environment)
-    create_plc.record_and_save(plant_name='piantina1', frames=30)
+    create_plc.record_and_save(plant_name='piantina1', frames=30, mesh=False)
 
 
 

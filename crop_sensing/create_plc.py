@@ -76,7 +76,7 @@ def record_and_save(plant_name='plant',frames=300, mesh=False):
     zed = sl.Camera()
     
     # Initialize the ZED camera with the configuration parameters
-    runtime_parameters, filter_params = initialize_zed(zed, False)  
+    runtime_parameters, filter_params = initialize_zed(zed, mesh)  
     
     # Create a PLY object
     if mesh:
