@@ -155,6 +155,6 @@ def get_zed_image(zed, save=False):
         memorize_images(image, depth_map, normal_map)
         # Salva il point cloud in un file PLY
         point_cloud.write("crop_sensing/data/point_cloud.ply")
-        print(f"Salvato acquisizioni in \\data\\")
+        print("Salvato acquisizioni in \\data\\")
     
     return image, depth_map, normal_map, point_cloud
